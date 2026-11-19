@@ -32,4 +32,4 @@ def test_update_task_ignores_status_change(client):
     data = patch_response.json()
 
     assert data["title"] == "New Test"
-    assert data["status"] == "completed"
+    assert data["status"] == "pending"
