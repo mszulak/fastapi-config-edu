@@ -1,0 +1,27 @@
+# =========================
+# Global and secret
+# =========================
+.venv/
+venv/
+env/
+.env
+.env.*
+!.env.example
+
+# =========================
+# PYTHON / UV / CELERY
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+celerybeat-schedule.db
+celerybeat.pid
+
+# =========================
+# System and IDE
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

@@ -1,0 +1,24 @@
+[project]
+name = "fastapi-1-intro"
+version = "0.1.0"
+description = "Backend for tutorial"
+requires-python = ">=3.14"
+dependencies = [
+    "celery>=5.7.0",
+    "fastapi[standard]>=0.164.0",
+    "packaging>=26.3",
+    "psycopg2-binary>=2.9.13",
+    "psycopg[binary]>=3.3.9",
+    "pydantic>=2.14.3",
+    "pydantic-settings>=2.16.3",
+    "redis>=8.1.0",
+    "sqlmodel>=0.0.50",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.1,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "app"
+module-root = ""
