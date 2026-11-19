@@ -1,0 +1,23 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Dowmload Repo Code
+        uses: actions/checkout@v4
+        run: uv sync --frozen
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        run: uv run pytest -v
