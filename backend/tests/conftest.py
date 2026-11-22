@@ -17,6 +17,7 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool
 
+from app import models  # noqa: F401
 from app.core.celery_app import run_heavy_task
 from app.db.session import get_session
 from app.main import app

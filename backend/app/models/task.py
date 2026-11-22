@@ -1,4 +1,9 @@
-from sqlmodel import Field, SQLModel
+from typing import TYPE_CHECKING
+
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class TaskBase(SQLModel):
@@ -13,14 +18,18 @@ class Task(TaskBase, table=True):
     status: str = "pending"
     internal_worker_note: str = "secret_log"
 
+    user_id: int | None = Field(default=None, foreign_key="users.id")
+    owner: User | None = Relationship(back_populates="tasks")
+
 
 class TaskCreate(TaskBase):
-    pass
+    user_id: int | None = None
 
 
 class TaskRead(TaskBase):
     id: int
     status: str
+    user_id: int | None = None
 
 
 class TaskUpdate(SQLModel):
