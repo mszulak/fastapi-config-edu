@@ -13,6 +13,7 @@ def test_create_and_read_task(client, mock_celery_delay):
     response = client.get(f"/tasks/{data['id']}")
     assert response.status_code == 200
     assert response.json()["title"] == "Test"
+    assert response.json()["description"] == None
 
 @pytest.mark.parametrize("invalid_hours", [0, -5, settings.max_hours_limit + 1])
 def test_create_task_invalid_hours_returns_400(client, invalid_hours):
