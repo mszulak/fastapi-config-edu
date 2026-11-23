@@ -2,6 +2,8 @@ from typing import TYPE_CHECKING
 
 from sqlmodel import Field, Relationship, SQLModel
 
+from app.models.task import TaskRead
+
 if TYPE_CHECKING:
     from app.models.task import Task
 
@@ -22,5 +24,13 @@ class UserCreate(UserBase):
     pass
 
 
+class UserRead(UserBase):
+    id: int
+
+
 class UserUpdate(UserBase):
     id: int
+
+
+class UserReadWithTasks(UserRead):
+    tasks: list[TaskRead] = []

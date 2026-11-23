@@ -1,26 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from fastapi import APIRouter, HTTPException
+from sqlmodel import select
 
+from app.api.deps import SessionDep, TokenDep
 from app.core.celery_app import run_heavy_task
 from app.core.config import settings
-from app.db.session import get_session
 from app.models.task import Task, TaskCreate, TaskRead, TaskUpdate
+from app.models.user import User
 
 router = APIRouter(prefix="/tasks", tags=["Tasks"])
-
-
-def verify_token(token: str = ""):
-    if token != settings.secret_token:
-        raise HTTPException(status_code=401)
-    return token
 
 
 @router.post("/", status_code=201, response_model=TaskRead)
 def create_task(
     task: TaskCreate,
-    token: str = Depends(verify_token),
-    session: Session = Depends(get_session),
+    token: TokenDep,
+    session: SessionDep,
 ):
+    if task.user_id is not None and session.get(User, task.user_id) is None:
+        raise HTTPException(
+            status_code=404, detail=f"User with id {task.user_id} not found"
+        )
+
     if task.estimated_hours <= 0:
         raise HTTPException(
             status_code=400, detail="Estimated hours has to be grater than 0"
@@ -39,7 +39,7 @@ def create_task(
 
 
 @router.get("/{task_id}", response_model=TaskRead)
-def read_task(task_id: int, session: Session = Depends(get_session)):
+def read_task(task_id: int, session: SessionDep):
     task = session.get(Task, task_id)
     if task is None:
         raise HTTPException(
@@ -49,7 +49,7 @@ def read_task(task_id: int, session: Session = Depends(get_session)):
 
 
 @router.get("/", response_model=list[TaskRead])
-def read_tasks(status: str | None = None, session: Session = Depends(get_session)):
+def read_tasks(session: SessionDep, status: str | None = None):
     statement = select(Task)
     if status is not None:
         statement = statement.where(Task.status == status)
@@ -61,8 +61,8 @@ def read_tasks(status: str | None = None, session: Session = Depends(get_session
 def update_task(
     task_id: int,
     task_in: TaskUpdate,
-    token: str = Depends(verify_token),
-    session: Session = Depends(get_session),
+    token: TokenDep,
+    session: SessionDep,
 ):
     db_task = session.get(Task, task_id)
     if db_task is None:
@@ -82,8 +82,8 @@ def update_task(
 @router.delete("/{task_id}", status_code=204)
 def delete_task(
     task_id: int,
-    token: str = Depends(verify_token),
-    session: Session = Depends(get_session),
+    token: TokenDep,
+    session: SessionDep,
 ):
     db_task = session.get(Task, task_id)
     if db_task is None:

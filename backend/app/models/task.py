@@ -19,7 +19,7 @@ class Task(TaskBase, table=True):
     internal_worker_note: str = "secret_log"
 
     user_id: int | None = Field(default=None, foreign_key="users.id")
-    owner: Optional["User"] = Relationship(back_populates="tasks") # noqa: UP037, UP045
+    owner: Optional["User"] = Relationship(back_populates="tasks")  # noqa: UP037, UP045
 
 
 class TaskCreate(TaskBase):
