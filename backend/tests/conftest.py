@@ -10,12 +10,14 @@ os.environ.setdefault("POSTGRES_HOST", "db")
 os.environ.setdefault("POSTGRES_PORT", "5432")
 os.environ.setdefault("FRONTEND_URL", "http://localhost:3000")
 
-import pytest
-from fastapi.testclient import TestClient
-from sqlmodel import SQLModel, Session, create_engine
-from sqlmodel.pool import StaticPool
 from unittest.mock import MagicMock
 
+import pytest
+from fastapi.testclient import TestClient
+from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel.pool import StaticPool
+
+from app import models  # noqa: F401
 from app.core.celery_app import run_heavy_task
 from app.db.session import get_session
 from app.main import app
@@ -32,6 +34,7 @@ def session_fixture():
     with Session(engine) as session:
         yield session
 
+
 @pytest.fixture(name="client")
 def client_fixture(session: Session):
     def get_session_override():
@@ -41,6 +44,7 @@ def client_fixture(session: Session):
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
+
 
 @pytest.fixture(autouse=True)
 def mock_celery_delay(monkeypatch):

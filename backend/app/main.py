@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.models.task import Task
 from app.api.tasks import router as tasks_router
+from app.api.users import router as users_router
 from app.core.config import settings
-
 
 app = FastAPI()
 # noinspection PyTypeChecker
@@ -16,7 +15,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(tasks_router)
+app.include_router(users_router)
+
+
 @app.get("/")
 def read_main():
     return {"service": "ai-backend", "status": "online"}
-
